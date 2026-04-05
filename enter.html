@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>عمرو بودكاست | Amr Podcast</title>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #0a1a2a 0%, #0a1f2f 50%, #051520 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* الخلفية المتحركة */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 150px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23FFD70015" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,170.7C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') repeat-x;
+            background-size: cover;
+            animation: waveMove 20s linear infinite;
+            opacity: 0.3;
+        }
+
+        .wave2 {
+            bottom: 20px;
+            opacity: 0.15;
+            animation: waveMove 15s linear infinite reverse;
+        }
+
+        @keyframes waveMove {
+            0% { background-position-x: 0; }
+            100% { background-position-x: 1440px; }
+        }
+
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: radial-gradient(circle, #FFD700, #FFA500);
+            border-radius: 50%;
+            animation: floatParticle var(--duration, 8s) infinite linear;
+            opacity: 0;
+            width: var(--size, 4px);
+            height: var(--size, 4px);
+            filter: blur(1px);
+        }
+
+        @keyframes floatParticle {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            background: #FFD700;
+            border-radius: 50%;
+            animation: starTwinkle 2s ease-in-out infinite;
+        }
+
+        @keyframes starTwinkle {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.2); }
+        }
+
+        /* ========== تأثير الضباب الذهبي ========== */
+        .fog-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(145deg, #030e15, #0a1f2f);
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 1;
+            visibility: visible;
+            overflow: hidden;
+        }
+
+        .fog-screen.hide {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        /* طبقة الضباب المتصاعد */
+        .golden-fog-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* جزيئات الضباب المتحركة */
+        .fog-particle {
+            position: absolute;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.5), rgba(255, 200, 100, 0.15));
+            border-radius: 50%;
+            filter: blur(20px);
+            animation: fogRise linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes fogRise {
+            0% {
+                transform: translateY(100vh) scale(0.6);
+                opacity: 0;
+            }
+            15% {
+                opacity: 0.5;
+            }
+            85% {
+                opacity: 0.4;
+            }
+            100% {
+                transform: translateY(-20vh) scale(1.3);
+                opacity: 0;
+            }
+        }
+
+        /* حاوية الاسم - مترابط الحروف */
+        .name-fog-container {
+            text-align: center;
+            position: relative;
+            z-index: 20;
+        }
+
+        .fog-name {
+            font-size: clamp(2.8rem, 11vw, 5rem);
+            font-weight: 900;
+            letter-spacing: 0.02em;
+            position: relative;
+            display: inline-block;
+            background: linear-gradient(135deg, #FFE5B4, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
+            opacity: 0;
+            transform: scale(0.9) translateY(20px);
+            filter: blur(8px);
+            transition: all 1.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            white-space: nowrap;
+        }
+
+        .fog-name.revealed {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            filter: blur(0);
+            text-shadow: 0 0 40px rgba(255, 215, 0, 0.7), 0 0 20px rgba(255, 200, 100, 0.5);
+        }
+
+        /* تأثير الضباب حول الاسم أثناء الظهور */
+        .name-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120%;
+            height: 150%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.3), transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+
+        .fog-name.revealed + .name-glow {
+            opacity: 1;
+            animation: glowPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.4; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; }
+        }
+
+        /* انفجار الضباب الذهبي - شفاف وناعم */
+        .fog-explosion {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.6), rgba(255, 180, 50, 0.3), rgba(10, 31, 47, 0.2));
+            backdrop-filter: blur(8px);
+            z-index: 3500;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.7s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            pointer-events: none;
+        }
+
+        .fog-explosion.active {
+            opacity: 1;
+            visibility: visible;
+            animation: fogExpandSoft 0.6s ease-out forwards;
+        }
+
+        @keyframes fogExpandSoft {
+            0% {
+                opacity: 0;
+                transform: scale(0.95);
+                backdrop-filter: blur(0px);
+            }
+            50% {
+                opacity: 0.9;
+                transform: scale(1.02);
+                backdrop-filter: blur(12px);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(1.1);
+                backdrop-filter: blur(0px);
+                visibility: hidden;
+            }
+        }
+
+        /* جزيئات ضبابية متطايرة بعد الانفجار - شفافة */
+        .flying-fog-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3600;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .flying-fog {
+            position: absolute;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.5), rgba(255, 140, 0, 0.2));
+            border-radius: 50%;
+            filter: blur(25px);
+            animation: fogFlyAwaySoft 1s ease-out forwards;
+        }
+
+        @keyframes fogFlyAwaySoft {
+            0% {
+                transform: scale(1) translate(0, 0);
+                opacity: 0.6;
+            }
+            100% {
+                transform: scale(0) translate(var(--x, 150px), var(--y, -120px));
+                opacity: 0;
+            }
+        }
+
+        /* ========== الصفحة الرئيسية ========== */
+        .landing-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            position: relative;
+            z-index: 2;
+            opacity: 0;
+            transition: opacity 1s ease-out;
+        }
+
+        .landing-page.visible {
+            opacity: 1;
+        }
+
+        .hero-container {
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        /* الميكروفون */
+        .podcast-icon-wrapper {
+            animation: iconAppear 0.5s ease-out forwards;
+            opacity: 0;
+            transform: scale(0.8);
+            animation-delay: 0.2s;
+        }
+
+        @keyframes iconAppear {
+            0% { opacity: 0; transform: scale(0.8) rotate(-10deg); }
+            100% { opacity: 1; transform: scale(1) rotate(0deg); }
+        }
+
+        .podcast-icon {
+            position: relative;
+            display: inline-block;
+        }
+
+        .podcast-icon i {
+            font-size: clamp(3rem, 10vw, 4rem);
+            color: #FFD700;
+            background: linear-gradient(145deg, #1a3a4a, #0a1a2a);
+            padding: clamp(0.8rem, 3vw, 1.2rem);
+            border-radius: 50%;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 215, 0, 0.5);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 215, 0, 0.2);
+            animation: microphoneBreathing 2s ease-in-out infinite;
+            display: inline-block;
+        }
+
+        @keyframes microphoneBreathing {
+            0%, 100% { transform: scale(1); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 215, 0, 0.2); }
+            50% { transform: scale(1.03); box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), 0 0 40px rgba(255, 215, 0, 0.4); }
+        }
+
+        .podcast-icon::before {
+            content: '';
+            position: absolute;
+            top: -12px;
+            left: -12px;
+            right: -12px;
+            bottom: -12px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.3), transparent);
+            animation: haloPulse 1.5s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes haloPulse {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.15); }
+        }
+
+        /* السماعة الكبيرة */
+        .headphone-wrapper {
+            position: relative;
+            margin: 0.5rem 0;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(-250px);
+        }
+
+        .headphone-wrapper.animate-drop {
+            animation: headphoneDropFromTop 0.9s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
+        }
+
+        @keyframes headphoneDropFromTop {
+            0% {
+                opacity: 0;
+                transform: translateY(-250px) rotate(-15deg);
+            }
+            40% {
+                opacity: 1;
+                transform: translateY(20px) rotate(5deg);
+            }
+            65% {
+                transform: translateY(-8px) rotate(-2deg);
+            }
+            85% {
+                transform: translateY(3px) rotate(1deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) rotate(0deg);
+            }
+        }
+
+        .headphone-icon-large {
+            font-size: clamp(8rem, 30vw, 14rem);
+            color: #FFD700;
+            filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 25px rgba(255, 215, 0, 0.5));
+            transition: all 0.3s ease;
+            animation: headphoneGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes headphoneGlow {
+            0%, 100% {
+                filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 20px rgba(255, 215, 0, 0.4));
+                transform: scale(1);
+            }
+            50% {
+                filter: drop-shadow(0 25px 50px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 45px rgba(255, 215, 0, 0.7));
+                transform: scale(1.02);
+            }
+        }
+
+        .headphone-wrapper .golden-flash {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            transform: translate(-50%, -50%) scale(0);
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.7), transparent);
+            pointer-events: none;
+            animation: goldenRingFlash 0.8s ease-out forwards;
+        }
+
+        @keyframes goldenRingFlash {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(2.2);
+                opacity: 0;
+            }
+        }
+
+        /* الكتابة التدريجية */
+        .welcome-message {
+            width: 100%;
+            min-height: 90px;
+            margin: 0.2rem 0;
+        }
+
+        .typed-text {
+            font-size: clamp(1.2rem, 5vw, 1.8rem);
+            font-weight: 700;
+            color: #FFD700;
+            line-height: 1.5;
+            text-align: center;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .typed-cursor {
+            display: inline-block;
+            width: 3px;
+            background: linear-gradient(180deg, #FFD700, #FFA500);
+            margin-left: 2px;
+            animation: blink 0.7s infinite;
+            border-radius: 2px;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .sub-message {
+            font-size: clamp(0.8rem, 3.5vw, 1rem);
+            color: #c9a87a;
+            margin-top: 0.6rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        .sub-message.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* زر الدخول */
+        .enter-btn {
+            margin-top: 0.8rem;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: buttonSlideUp 0.6s ease-out 1s forwards;
+        }
+
+        @keyframes buttonSlideUp {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn-enter {
+            background: linear-gradient(135deg, #1a3a4a, #0a1a2a);
+            color: #FFD700;
+            border: 2px solid rgba(255, 215, 0, 0.5);
+            padding: clamp(0.9rem, 3.5vw, 1.1rem) clamp(2.5rem, 9vw, 3.5rem);
+            font-size: clamp(1rem, 4vw, 1.2rem);
+            font-weight: 800;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-family: 'Cairo', sans-serif;
+            position: relative;
+            overflow: hidden;
+            animation: buttonPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes buttonPulse {
+            0%, 100% { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); border-color: rgba(255, 215, 0, 0.5); }
+            50% { box-shadow: 0 10px 40px rgba(255, 215, 0, 0.2); border-color: rgba(255, 215, 0, 0.8); }
+        }
+
+        .btn-enter::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 215, 0, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.4s, height 0.4s;
+        }
+
+        .btn-enter:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-enter:hover {
+            transform: translateY(-3px);
+            background: linear-gradient(135deg, #2a4a5a, #1a2a3a);
+            border-color: rgba(255, 215, 0, 0.8);
+        }
+
+        .page-transition-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #051520, #0a1a2a);
+            z-index: 4000;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+        }
+
+        .page-transition-overlay.active {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        @keyframes headphoneShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+
+        @media (max-width: 768px) {
+            .landing-page { padding: 1rem; }
+            .hero-container { gap: 1.5rem; }
+            .headphone-icon-large { font-size: clamp(6rem, 28vw, 10rem); }
+            .fog-name { white-space: normal; }
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg">
+        <div class="wave"></div>
+        <div class="wave wave2"></div>
+        <div class="stars" id="stars"></div>
+        <div class="particles" id="particles"></div>
+    </div>
+
+    <!-- شاشة الضباب الذهبي -->
+    <div class="fog-screen" id="fogScreen">
+        <div class="golden-fog-layer" id="goldenFogLayer"></div>
+        <div class="name-fog-container">
+            <div class="fog-name" id="fogName">عمرو بودكاست</div>
+            <div class="name-glow"></div>
+        </div>
+    </div>
+
+    <!-- انفجار الضباب - شفاف -->
+    <div class="fog-explosion" id="fogExplosion"></div>
+    <div class="flying-fog-particles" id="flyingFogParticles"></div>
+
+    <div class="page-transition-overlay" id="pageTransitionOverlay"></div>
+
+    <div class="landing-page" id="landingPage">
+        <div class="hero-container">
+            <div class="podcast-icon-wrapper">
+                <div class="podcast-icon">
+                    <i class="fas fa-microphone-alt"></i>
+                </div>
+            </div>
+
+            <div class="headphone-wrapper" id="headphoneWrapper">
+                <i class="fas fa-headphones headphone-icon-large"></i>
+            </div>
+
+            <div class="welcome-message">
+                <div class="typed-text" id="typedText"></div>
+                <div class="sub-message" id="subMessage"></div>
+            </div>
+
+            <div class="enter-btn">
+                <button class="btn-enter" id="enterBtn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    دخول
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========================================
+        // تأثير الضباب الذهبي المتصاعد
+        // ========================================
+        const fogScreen = document.getElementById('fogScreen');
+        const fogName = document.getElementById('fogName');
+        const goldenFogLayer = document.getElementById('goldenFogLayer');
+        const fogExplosion = document.getElementById('fogExplosion');
+        const flyingFogParticles = document.getElementById('flyingFogParticles');
+        const landingPage = document.getElementById('landingPage');
+        const headphoneWrapper = document.getElementById('headphoneWrapper');
+
+        // إنشاء جزيئات الضباب المتصاعدة
+        function createFogParticles() {
+            const particleCount = 45;
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'fog-particle';
+                const size = Math.random() * 200 + 80;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDuration = Math.random() * 9 + 7 + 's';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.opacity = Math.random() * 0.5 + 0.2;
+                goldenFogLayer.appendChild(particle);
+            }
+        }
+
+        // إنشاء جزيئات ضبابية متطايرة بعد الانفجار - شفافة
+        function createFlyingFogParticlesExplosion() {
+            const particleCount = 70;
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'flying-fog';
+                const size = Math.random() * 130 + 50;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = window.innerWidth / 2 + 'px';
+                particle.style.top = window.innerHeight / 2 + 'px';
+                
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.random() * 500 + 150;
+                const xOffset = Math.cos(angle) * distance;
+                const yOffset = Math.sin(angle) * distance - 80;
+                
+                particle.style.setProperty('--x', xOffset + 'px');
+                particle.style.setProperty('--y', yOffset + 'px');
+                particle.style.animationDelay = Math.random() * 0.2 + 's';
+                
+                flyingFogParticles.appendChild(particle);
+                
+                setTimeout(() => {
+                    particle.remove();
+                }, 1000);
+            }
+        }
+
+        // إظهار الاسم بتأثير الضباب
+        function revealName() {
+            fogName.classList.add('revealed');
+            
+            // بعد 1.5 ثانية من ظهور الاسم، نبدأ انفجار الضباب الشفاف
+            setTimeout(() => {
+                fogExplosion.classList.add('active');
+                createFlyingFogParticlesExplosion();
+                
+                // بعد اكتمال الانفجار، إخفاء شاشة الضباب وإظهار الصفحة
+                setTimeout(() => {
+                    fogScreen.classList.add('hide');
+                    landingPage.classList.add('visible');
+                    
+                    setTimeout(() => {
+                        headphoneWrapper.classList.add('animate-drop');
+                        
+                        const flashDiv = document.createElement('div');
+                        flashDiv.className = 'golden-flash';
+                        flashDiv.style.position = 'absolute';
+                        flashDiv.style.top = '50%';
+                        flashDiv.style.left = '50%';
+                        flashDiv.style.width = '100%';
+                        flashDiv.style.height = '100%';
+                        flashDiv.style.transform = 'translate(-50%, -50%) scale(0)';
+                        flashDiv.style.borderRadius = '50%';
+                        flashDiv.style.background = 'radial-gradient(circle, rgba(255, 215, 0, 0.6), transparent)';
+                        flashDiv.style.pointerEvents = 'none';
+                        flashDiv.style.animation = 'goldenRingFlash 0.8s ease-out forwards';
+                        headphoneWrapper.appendChild(flashDiv);
+                        
+                        setTimeout(() => {
+                            if (flashDiv && flashDiv.remove) flashDiv.remove();
+                        }, 800);
+                        
+                        setTimeout(() => {
+                            startTypingEffect();
+                        }, 300);
+                    }, 150);
+                    
+                    setTimeout(() => {
+                        fogExplosion.classList.remove('active');
+                    }, 600);
+                }, 700);
+            }, 1500);
+        }
+
+        // ========================================
+        // الكتابة التدريجية
+        // ========================================
+        const welcomeMessages = [
+            "مرحباً بك في عمرو بودكاست 🎧",
+            "استعد لتجربة استماع فاخرة ✨",
+            "اكتشف محتوى ملهم ومميز 🎙️"
+        ];
+        
+        const subMessages = [
+            "نتمنى لك وقتاً ممتعاً مع أفضل الحلقات",
+            "هنا حيث يلتقي الإبداع مع الصوت",
+            "استمع وتعلم واستمتع"
+        ];
+        
+        let messageIndex = 0;
+        let charIndex = 0;
+        let currentText = "";
+        let isDeleting = false;
+        let typedElement = document.getElementById('typedText');
+        let subMessageElement = document.getElementById('subMessage');
+        let isPaused = false;
+        
+        function startTypingEffect() {
+            typeEffect();
+        }
+        
+        function typeEffect() {
+            if (isPaused) {
+                setTimeout(typeEffect, 80);
+                return;
+            }
+            
+            const fullText = welcomeMessages[messageIndex];
+            
+            if (isDeleting) {
+                currentText = fullText.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                currentText = fullText.substring(0, charIndex + 1);
+                charIndex++;
+            }
+            
+            typedElement.innerHTML = currentText + '<span class="typed-cursor">|</span>';
+            
+            if (!isDeleting && charIndex === fullText.length) {
+                subMessageElement.textContent = subMessages[messageIndex];
+                subMessageElement.classList.add('visible');
+                
+                isPaused = true;
+                setTimeout(() => {
+                    isPaused = false;
+                    isDeleting = true;
+                    subMessageElement.classList.remove('visible');
+                }, 1600);
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                messageIndex = (messageIndex + 1) % welcomeMessages.length;
+            }
+            
+            let speed = isDeleting ? 30 : 50;
+            setTimeout(typeEffect, speed);
+        }
+
+        // ========================================
+        // إنشاء النجوم والجزيئات
+        // ========================================
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = window.innerWidth < 768 ? 50 : 100;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                const size = Math.random() * 5 + 2;
+                particle.style.setProperty('--size', size + 'px');
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.setProperty('--duration', Math.random() * 12 + 8 + 's');
+                particle.style.animationDelay = Math.random() * 8 + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const starCount = 100;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                const size = Math.random() * 2.5 + 1;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                star.style.animationDuration = Math.random() * 2 + 1 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+        
+        createParticles();
+        createStars();
+
+        // ========================================
+        // تأثيرات حركة الماوس
+        // ========================================
+        document.addEventListener('mousemove', (e) => {
+            const particles = document.querySelectorAll('.particle');
+            const mouseX = e.clientX / window.innerWidth;
+            const mouseY = e.clientY / window.innerHeight;
+            
+            particles.forEach((particle, index) => {
+                const speed = 0.03;
+                const offsetX = (mouseX - 0.5) * speed * (index % 3);
+                const offsetY = (mouseY - 0.5) * speed * (index % 3);
+                particle.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+            });
+        });
+
+        // ========================================
+        // زر الدخول
+        // ========================================
+        const enterBtn = document.getElementById('enterBtn');
+        const transitionOverlay = document.getElementById('pageTransitionOverlay');
+
+        if (enterBtn) {
+            enterBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                if (headphoneWrapper) {
+                    headphoneWrapper.style.animation = 'headphoneShake 0.2s ease-in-out';
+                    setTimeout(() => {
+                        headphoneWrapper.style.animation = '';
+                    }, 200);
+                }
+                
+                enterBtn.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    enterBtn.style.transform = '';
+                }, 150);
+                
+                transitionOverlay.classList.add('active');
+                
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 600);
+            });
+        }
+
+        // بدء التأثير
+        createFogParticles();
+        
+        setTimeout(() => {
+            revealName();
+        }, 400);
+
+        window.addEventListener('load', () => {
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                document.body.style.transition = 'opacity 0.4s';
+                document.body.style.opacity = '1';
+            }, 50);
+        });
+         
+    
+    </script>
+     <script src="player.js"></script>
+    <script src="main.js"></script>
+</body>
+</body>
+</html>
